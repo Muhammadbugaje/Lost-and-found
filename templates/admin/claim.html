@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}Claim{% endblock %}
+{% block body %}
+<body>
+    <h1>Claim {{ item.name }}</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form method="POST" autocomplete="off">
+        {{ form.hidden_tag() }}
+        <p>{{ form.name.label }}<br>{{ form.name() }}</p>
+        <p>{{ form.reg_number.label }}<br>{{ form.reg_number() }}</p>
+        <p>{{ form.phone.label }}<br>{{ form.phone() }}</p>
+        <p>{{ form.submit() }}</p>
+    </form>
+</body>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Add Item{% endblock %}
+{% block body %}
+<body>
+    <h1>Add New Item</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form method="POST" enctype="multipart/form-data" autocomplete="off">
+        {{ form.hidden_tag() }}
+        <p>{{ form.name.label }}<br>{{ form.name() }}</p>
+        <p>{{ form.category.label }}<br>{{ form.category() }}</p>
+        <p>{{ form.description.label }}<br>{{ form.description() }}</p>
+        <p>{{ form.found_location.label }}<br>{{ form.found_location() }}</p>
+        <p>{{ form.take_from_location.label }}<br>{{ form.take_from_location() }}</p>
+        <p>{{ form.image.label }}<br>{{ form.image() }}</p>
+        <p>{{ form.submit() }}</p>
+    </form>
+</body>
+{% endblock %}

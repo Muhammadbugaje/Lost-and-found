@@ -1,0 +1,24 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+h1 {
+    color: navy;
+}
+form {
+    margin-bottom: 20px;
+}
+input[type="text"], input[type="password"] {
+    padding: 5px;
+    margin: 5px 0;
+}
+input[type="submit"] {
+    padding: 5px 10px;
+    background-color: navy;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+img {
+    max-width: 200px;
+}

@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+{% block title %}Admin - Items{% endblock %}
+{% block body %}
+    <div class="container mt-5">
+        <h2>Lost Items</h2>
+        <a href="{{ url_for('admin_add_item') }}" class="btn btn-primary mb-3">Add New Item</a>
+        {% for item in items %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }} - {{ item.category }}</h5>
+                    <p class="card-text">Status: {{ item.status }}</p>
+                    {% if item.image %}
+                        <img src="{{ url_for('static', filename='Uploads/' + item.image) }}" alt="{{ item.name }}" class="img-fluid mb-2" style="max-width: 50px;">
+                    {% endif %}
+                    <a href="{{ url_for('admin_edit_item', id=item.id) }}" class="btn btn-secondary btn-sm">Edit</a>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteItemModal" data-item-id="{{ item.id }}" data-item-name="{{ item.name }}">Delete</button>
+                    {% if item.status == 'found' %}
+                        <a href="{{ url_for('admin_claim_item', id=item.id) }}" class="btn btn-success btn-sm">Claim</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- Delete Item Modal -->
+        <div class="modal fade" id="deleteItemModal" tabindex="-1" aria-labelledby="deleteItemModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteItemModalLabel">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete the item <span id="modalItemName"></span>?
+                    </div>
+                    <div class="modal-footer">
+                        <form id="deleteItemForm" method="POST" action="">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-primary">Yes, Delete</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const deleteModal = document.getElementById('deleteItemModal');
+                deleteModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const itemId = button.getAttribute('data-item-id');
+                    const itemName = button.getAttribute('data-item-name');
+                    const modalItemName = deleteModal.querySelector('#modalItemName');
+                    const form = deleteModal.querySelector('#deleteItemForm');
+                    modalItemName.textContent = itemName;
+                    form.action = `/admin/delete-item/${itemId}`;
+                    });
+                });
+        </script>
+    </div>
+{% endblock %}

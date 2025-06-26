@@ -1,0 +1,79 @@
+{% extends 'layout.html' %}
+{% block title %}Claimed Items{% endblock %}
+{% block body %}
+    <h1>Claimed Items</h1>
+    <form method="GET" class="mb-3" autocomplete="off">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search by name or category">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    {% if items_with_claims %}
+        {% for item, claim in items_with_claims %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }} - {{ item.category }}</h5>
+                    <p class="card-text">
+                        Description: {{ item.description }} <br>
+                        Found at: {{ item.found_location }} <br>
+                        Pick up at: {{ item.take_from_location }}
+                    </p>
+                    {% if item.image %}
+                        <img src="{{ url_for('static', filename='Uploads/' + item.image) }}" alt="{{ item.name }}" class="img-fluid mb-2" style="max-width: 100px;">
+                    {% endif %}
+                    <p class="card-text">
+                        <strong>Claim Details:</strong> <br>
+                        Name: {{ claim.name }} <br>
+                        Registration Number: {{ claim.reg_number }} <br>
+                        Phone: {{ claim.phone }}
+                    </p>
+                    {% if current_user.is_authenticated %}
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteClaimModal" data-claim-id="{{ claim.id }}" data-item-name="{{ item.name }}">
+                            Delete Claim
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No claimed items yet.</p>
+    {% endif %}
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteClaimModal" tabindex="-1" aria-labelledby="deleteClaimModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteClaimModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the claim for <span id="modalItemName"></span>?
+                </div>
+                <div class="modal-footer">
+                    <form id="deleteClaimForm" method="POST" action="">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-primary">Yes, Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle modal data
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteModal = document.getElementById('deleteClaimModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const claimId = button.getAttribute('data-claim-id');
+                const itemName = button.getAttribute('data-item-name');
+                const modalItemName = deleteModal.querySelector('#modalItemName');
+                const form = deleteModal.querySelector('#deleteClaimForm');
+                modalItemName.textContent = itemName;
+                form.action = `/delete-claim/${claimId}`;
+            });
+        });
+    </script>
+{% endblock %}

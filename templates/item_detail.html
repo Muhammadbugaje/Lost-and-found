@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %} {{ item.name }} {% endblock %}
+{% block body %}
+<body>
+    <h1>{{ item.name }}</h1>
+    <p>Category: {{ item.category }}</p>
+    <p>Description: {{ item.description }}</p>
+    <p>Found at: {{ item.found_location }}</p>
+    <p>Pick up at: {{ item.take_from_location }}</p>
+    {% if item.image %}
+        <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.name }}" width="200">
+    {% endif %}
+    <p>Status: {{ item.status }}</p>
+    <p><a href="{{ url_for('home') }}">Back to Home</a></p>
+</body>
+{% endblock %}
